@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -14,6 +15,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,11 +27,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     ArrayList<String> subjects = new ArrayList<>(Arrays.asList("LDDM", "Grafos", "AED 2"));
-    LinkedList<String> anotherSubjects = new LinkedList<>(Arrays.asList("Banco de Dados", "Calculo I", "Cálculo II", "Cálculo III", "Algebra Linear", "Matemática Discreta", "Estatística", "AED 1", "AED 3", "LP", "PAA", "IA", "Compiladores", "PID", "Comp. Paralela", "Comp. Gráfica", "Otimização"));
+    //LinkedList<String> anotherSubjects = new LinkedList<>(Arrays.asList("Banco de Dados", "Calculo I", "Cálculo II", "Cálculo III", "Algebra Linear", "Matemática Discreta", "Estatística", "AED 1", "AED 3", "LP", "PAA", "IA", "Compiladores", "PID", "Comp. Paralela", "Comp. Gráfica", "Otimização"));
     Menu menu = null;
-    SubMenu pdfSubMenu = null;
-    SubMenu linkSubMenu = null;
-    SubMenu videoSubMenu = null;
+    SubMenu SubMenu = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,15 +49,35 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-                NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-                menu = navigationView.getMenu();
-                String subject = anotherSubjects.poll();
-                //linkSubMenu.add(subject).setOnMenuItemClickListener(onMenuItemClick("LINK"));
-                pdfSubMenu.add(subject).setOnMenuItemClickListener(onMenuItemClick("PDF"));
-                //videoSubMenu.add(subject).setOnMenuItemClickListener(onMenuItemClick("VIDEO"));
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_info, null);
+                final EditText materia = (EditText) mView.findViewById(R.id.infoMat);
+                Button addBtn = (Button) mView.findViewById(R.id.btnAddMat);
+                mBuilder.setView(mView);
+                final AlertDialog dialog = mBuilder.create();
+                dialog.show();
 
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                addBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(!materia.getText().toString().isEmpty()){
+                            NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+                            menu = navigationView.getMenu();
+                            String subject = materia.getText().toString();
+                            SubMenu.add(subject).setOnMenuItemClickListener(onMenuItemClick("Materias"));
+                            Toast toast = Toast.makeText(getApplicationContext(), "Materia adicionada com sucesso!", Toast.LENGTH_SHORT);
+                            toast.show();
+                            dialog.dismiss();
+                        }
+                        else {
+                            materia.setError("Insira uma materia!");
+                            Toast toast = Toast.makeText(getApplicationContext(), "Erro! Campo vazio!", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                    }
+                });
+
+
             }
         });
     }
@@ -72,14 +94,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         menu = navigationView.getMenu();
-        pdfSubMenu = menu.addSubMenu("PDF");
-        //linkSubMenu = menu.addSubMenu("Link");
-        //videoSubMenu = menu.addSubMenu("Vídeo");
+        SubMenu = menu.addSubMenu("Materias");
 
         for (String subject : subjects) {
-            pdfSubMenu.add(subject).setOnMenuItemClickListener(onMenuItemClick("PDF"));
-            //linkSubMenu.add(subject).setOnMenuItemClickListener(onMenuItemClick("LINK"));
-            //videoSubMenu.add(subject).setOnMenuItemClickListener(onMenuItemClick("VIDEO"));
+            SubMenu.add(subject).setOnMenuItemClickListener(onMenuItemClick("Materias"));
         }
     }
 
@@ -131,29 +149,13 @@ public class MainActivity extends AppCompatActivity
                 Bundle args = new Bundle();
 
                 switch (fileType) {
-                    case "PDF":
+                    case "Materias":
                         PdfFragment pdfFragment = new PdfFragment();
 
                         args.putString("subjectName", item.getTitle().toString());
-                        args.putString("fileType", fileType);
+                        //args.putString("fileType", fileType);
                         pdfFragment.setArguments(args);
                         ft.replace(R.id.placeholder_fragment, pdfFragment);
-                        break;
-                    case "LINK":
-                        LinkFragment linkFragment = new LinkFragment();
-
-                        args.putString("subjectName", item.getTitle().toString());
-                        args.putString("fileType", fileType);
-                        linkFragment.setArguments(args);
-                        ft.replace(R.id.placeholder_fragment, linkFragment);
-                        break;
-                    case "VIDEO":
-                        VideoFragment videoFragment = new VideoFragment();
-
-                        args.putString("subjectName", item.getTitle().toString());
-                        args.putString("fileType", fileType);
-                        videoFragment.setArguments(args);
-                        ft.replace(R.id.placeholder_fragment, videoFragment);
                         break;
                 }
 
