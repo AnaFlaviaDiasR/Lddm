@@ -31,6 +31,7 @@ public class listaConvidados extends AppCompatActivity {
     private String orgName,orgEmail,telorg,horaInicio,horaFim,dataInicio,dataFim,nomeEvento;
     Button btAdd,addBoth;
 
+    //Olha eu aqui again :)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
