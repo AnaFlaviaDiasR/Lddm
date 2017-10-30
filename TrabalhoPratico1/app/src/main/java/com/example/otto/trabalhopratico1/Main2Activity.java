@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 public class Main2Activity extends AppCompatActivity {
 
+    //Oi Otto, tudo bom?
     private TextView txtnome,txtemail,txtnumero;
     private String orgName,orgEmail,telorg;
     private Button nextPg;
